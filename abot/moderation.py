@@ -28,17 +28,26 @@ class Moderation(commands.Cog):
     @commands.slash_command(name='clear', description='Очистить чат.')
     @commands.has_permissions(administrator=True)
     async def clear(self, ctx, количество: Option(int, 'Количество удаляемых сообщений.', required=False, default=100)):
-        if количество >= 100000000000:
+        if количество >= 1000000000000:
             await ctx.respond('Максимальное количество: 100000000000')
         else:
-            messages = await ctx.history(limit=100000000000).flatten()
+            messages = await ctx.history(limit=1000000000000).flatten()
             await ctx.channel.purge(limit=количество)
-            if len(messages) >= 5:
-                await ctx.respond(f'Удалено {len(messages)} сообщений!')
-            if len(messages) >= 2 and len(messages) <= 4:
-                await ctx.respond(f'Удалено {len(messages)} сообщения!')
-            elif len(messages) == 1:
-                await ctx.respond(f'Удалено 1 сообщение!')
+            if len(messages) >= количество:
+                if количество >= 5:
+                    await ctx.respond(f'Удалено {количество} сообщений!')
+                if количество >= 2 and len(messages) <= 4:
+                    await ctx.respond(f'Удалено {количество} сообщения!')
+                elif количество == 1:
+                    await ctx.respond(f'Удалено 1 сообщение!')
+
+            if len(messages) <= количество:
+                if len(messages) >= 5:
+                    await ctx.respond(f'Удалено {len(messages)} сообщений!')
+                if len(messages) >= 2 and len(messages) <= 4:
+                    await ctx.respond(f'Удалено {len(messages)} сообщения!')
+                elif len(messages) == 1:
+                    await ctx.respond(f'Удалено 1 сообщение!')
 
     @commands.slash_command(name='admin', description='Админ панель')
     @commands.has_role(923484499382243359)
