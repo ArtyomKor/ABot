@@ -49,8 +49,11 @@ class Moderation(commands.Cog):
                 elif len(messages) == 1:
                     await ctx.respond(f'Удалено 1 сообщение!')
 
+    def moders_ids():
+        for moders_id in moder_id:
+            return moders_id
     @commands.slash_command(name='admin', description='Админ панель')
-    @commands.has_role(moder_id)
+    @commands.has_role(moders_ids)
     async def admin(self, ctx, пользователь: Option(discord.Member, 'Пользователь', required=True)):
         id = пользователь.id
         role = discord.utils.get(ctx.guild.roles, id=923522612066418769)
