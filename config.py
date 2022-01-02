@@ -5,3 +5,4 @@ db_login = 'your_login_db'
 db_password = 'your_password_db'
 db_host = 'your_ip_db'
 db_name = 'your_name_db'
+moder_id = ['your_role_moder_id']

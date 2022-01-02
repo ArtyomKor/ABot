@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord.commands import Option
 from discord.ui import Button, View
-from config import owner_id
+from config import owner_id, moder_id
 import random
 
 code = random.randint(0, 999999999)
@@ -50,7 +50,7 @@ class Moderation(commands.Cog):
                     await ctx.respond(f'Удалено 1 сообщение!')
 
     @commands.slash_command(name='admin', description='Админ панель')
-    @commands.has_role(923484499382243359)
+    @commands.has_role(moder_id)
     async def admin(self, ctx, пользователь: Option(discord.Member, 'Пользователь', required=True)):
         id = пользователь.id
         role = discord.utils.get(ctx.guild.roles, id=923522612066418769)
