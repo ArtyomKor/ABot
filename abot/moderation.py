@@ -61,25 +61,34 @@ class Moderation(commands.Cog):
         emb.add_field(name='Действия', value=f'Что Вы хотите сделать с {пользователь.display_name}?')
         kickB = Button(label='Кикнуть', style=discord.ButtonStyle.danger,row=1)
         async def kick_callback(interaction):
-            await interaction.response.edit_message(content="Кикнут(а)!", view=None, embed=None)
-            await пользователь.kick(reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
+            if interaction.user == ctx.author:
+                await interaction.response.edit_message(content="Кикнут(а)!", view=None, embed=None)
+                await пользователь.kick(reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
+            else:
+                ctx.send('Вы не являетесь администратором!')
         kickB.callback = kick_callback
         if role in пользователь.roles:
             muteB = Button(label='Размьютить', style=discord.ButtonStyle.success,row=1)
         else:
             muteB = Button(label='Замьютить', style=discord.ButtonStyle.danger,row=1)
         async def mute_callback(interaction):
-            if role in пользователь.roles:
-                await interaction.response.edit_message(content="Размьючен(а)!", view=None, embed=None)
-                await пользователь.remove_roles(role, reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
+            if interaction.user == ctx.author:
+                if role in пользователь.roles:
+                    await interaction.response.edit_message(content="Размьючен(а)!", view=None, embed=None)
+                    await пользователь.remove_roles(role, reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
+                else:
+                    await interaction.response.edit_message(content="Замьючен(а)!", view=None, embed=None)
+                    await пользователь.add_roles(role, reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
             else:
-                await interaction.response.edit_message(content="Замьючен(а)!", view=None, embed=None)
-                await пользователь.add_roles(role, reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
+                ctx.send('Вы не являетесь администратором!')
         muteB.callback = mute_callback
         banB = Button(label='Забанить', style=discord.ButtonStyle.danger,row=1)
         async def ban_callback(interaction):
-            await interaction.response.edit_message(content="Забанен(а)!", view=None, embed=None)
-            await пользователь.ban(reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
+            if interaction.user == ctx.author:
+                await interaction.response.edit_message(content="Забанен(а)!", view=None, embed=None)
+                await пользователь.ban(reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
+            else:
+                ctx.send('Вы не являетесь администратором!')
         view = View()
         view.add_item(kickB)
         view.add_item(muteB)
