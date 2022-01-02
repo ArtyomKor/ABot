@@ -36,7 +36,7 @@ class Moderation(commands.Cog):
             if len(messages) >= количество:
                 if количество >= 5:
                     await ctx.respond(f'Удалено {количество} сообщений!')
-                if количество >= 2 and len(messages) <= 4:
+                if количество >= 2 and количество <= 4:
                     await ctx.respond(f'Удалено {количество} сообщения!')
                 elif количество == 1:
                     await ctx.respond(f'Удалено 1 сообщение!')
@@ -44,7 +44,7 @@ class Moderation(commands.Cog):
             if len(messages) <= количество:
                 if len(messages) >= 5:
                     await ctx.respond(f'Удалено {len(messages)} сообщений!')
-                if len(messages) >= 2 and len(messages) <= 4:
+                if len(messages) >= 2 and количество <= 4:
                     await ctx.respond(f'Удалено {len(messages)} сообщения!')
                 elif len(messages) == 1:
                     await ctx.respond(f'Удалено 1 сообщение!')
