@@ -65,7 +65,7 @@ class Moderation(commands.Cog):
                 await interaction.response.edit_message(content="Кикнут(а)!", view=None, embed=None)
                 await пользователь.kick(reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
             else:
-                await ctx.send('Вы не являетесь администратором!')
+                await ctx.respond('Вы не являетесь администратором!')
         kickB.callback = kick_callback
         if role in пользователь.roles:
             muteB = Button(label='Размьютить', style=discord.ButtonStyle.success,row=1)
@@ -80,7 +80,7 @@ class Moderation(commands.Cog):
                     await interaction.response.edit_message(content="Замьючен(а)!", view=None, embed=None)
                     await пользователь.add_roles(role, reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
             else:
-                await ctx.send('Вы не являетесь администратором!')
+                await ctx.respond('Вы не являетесь администратором!')
         muteB.callback = mute_callback
         banB = Button(label='Забанить', style=discord.ButtonStyle.danger,row=1)
         async def ban_callback(interaction):
@@ -88,7 +88,7 @@ class Moderation(commands.Cog):
                 await interaction.response.edit_message(content="Забанен(а)!", view=None, embed=None)
                 await пользователь.ban(reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
             else:
-                await ctx.send('Вы не являетесь администратором!')
+                await ctx.respond('Вы не являетесь администратором!')
         view = View()
         view.add_item(kickB)
         view.add_item(muteB)
