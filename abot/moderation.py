@@ -80,7 +80,7 @@ class Moderation(commands.Cog):
                     await пользователь.edit(mute=False, reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
                 else:
                     await interaction.response.edit_message(content="Замьючен(а)!", view=None, embed=None)
-                    await пользователь.edit(mute=True, reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}', communication_disabled_until=datetime.datetime(minute=minutes))
+                    await пользователь.edit(mute=True, reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}', communication_disabled_until=datetime.date.today(minute=minutes))
             else:
                 await ctx.respond('Вы не являетесь администратором!')
         muteB.callback = mute_callback
