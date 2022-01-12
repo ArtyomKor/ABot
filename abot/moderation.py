@@ -1,9 +1,11 @@
+from datetime import datetime
 import discord
 from discord.ext import commands
 from discord.commands import Option
 from discord.ui import Button, View
 from config import owner_id, moder_id
 import random
+import datetime
 
 code = random.randint(0, 999999999)
 
@@ -54,7 +56,7 @@ class Moderation(commands.Cog):
             return moders_id
     @commands.slash_command(name='admin', description='Админ панель')
     @commands.has_role(moders_ids())
-    async def admin(self, ctx, пользователь: Option(discord.Member, 'Пользователь', required=True)):
+    async def admin(self, ctx, пользователь: Option(discord.Member, 'Пользователь', required=True), minutes: Option(int, 'Количество минут мута.', required=True)):
         id = пользователь.id
         role = discord.utils.get(ctx.guild.roles, id=923522612066418769)
         emb = discord.Embed(title='Админ-панель', colour=discord.Color.green())
@@ -75,10 +77,10 @@ class Moderation(commands.Cog):
             if interaction.user == ctx.author:
                 if role in пользователь.roles:
                     await interaction.response.edit_message(content="Размьючен(а)!", view=None, embed=None)
-                    await пользователь.remove_roles(role, reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
+                    await пользователь.edit(mute=False, reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
                 else:
                     await interaction.response.edit_message(content="Замьючен(а)!", view=None, embed=None)
-                    await пользователь.add_roles(role, reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
+                    await пользователь.edit(mute=True, reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}', communication_disabled_until=datetime.datetime(minute=minutes))
             else:
                 await ctx.respond('Вы не являетесь администратором!')
         muteB.callback = mute_callback
@@ -89,6 +91,7 @@ class Moderation(commands.Cog):
                 await пользователь.ban(reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
             else:
                 await ctx.respond('Вы не являетесь администратором!')
+        banB.callback = ban_callback
         view = View()
         view.add_item(kickB)
         view.add_item(muteB)
