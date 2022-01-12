@@ -96,7 +96,7 @@ class Moderation(commands.Cog):
         view.add_item(kickB)
         view.add_item(muteB)
         view.add_item(banB)
-        await ctx.respond(embed=emb,view=view)
+        await ctx.respond(embed=emb,view=view, ephemeral=True)
 
     async def addorremove(ctx: discord.AutocompleteContext):
         vibor=["убрать", "поставить"]
