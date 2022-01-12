@@ -56,7 +56,7 @@ class Moderation(commands.Cog):
             return moders_id
     @commands.slash_command(name='admin', description='Админ панель')
     @commands.has_role(moders_ids())
-    async def admin(self, ctx, пользователь: Option(discord.Member, 'Пользователь', required=True), minutes: Option(int, 'Количество минут мута.', required=True)):
+    async def admin(self, ctx, пользователь: Option(discord.Member, 'Пользователь', required=True), минут: Option(int, 'Количество минут мута.', required=True), секунд: Option(int, 'Количество секунд мута.', required=False), часов: Option(int, 'Количество часов мута.', required=False), дней: Option(int, 'Количество дней мута.', required=False)):
         id = пользователь.id
         role = discord.utils.get(ctx.guild.roles, id=923522612066418769)
         emb = discord.Embed(title='Админ-панель', colour=discord.Color.green())
@@ -80,7 +80,7 @@ class Moderation(commands.Cog):
                     await пользователь.timeout_for(reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}', duration=datetime.timedelta(days = 0, hours = 0, minutes = 0, seconds = 0))
                 else:
                     await interaction.response.edit_message(content="Замьючен(а)!", view=None, embed=None)
-                    await пользователь.timeout_for(reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}', duration=datetime.timedelta(days = 0, hours = 0, minutes = minutes, seconds = 0))
+                    await пользователь.timeout_for(reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}', duration=datetime.timedelta(days = дней, hours = часов, minutes = минут, seconds = секунд))
             else:
                 await ctx.respond('Вы не являетесь администратором!')
         muteB.callback = mute_callback
