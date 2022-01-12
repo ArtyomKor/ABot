@@ -69,13 +69,13 @@ class Moderation(commands.Cog):
             else:
                 await ctx.respond('Вы не являетесь администратором!')
         kickB.callback = kick_callback
-        if role in пользователь.roles:
+        if пользователь.timed_out == True:
             muteB = Button(label='Размьютить', style=discord.ButtonStyle.success,row=1)
         else:
             muteB = Button(label='Замьютить', style=discord.ButtonStyle.danger,row=1)
         async def mute_callback(interaction):
             if interaction.user == ctx.author:
-                if role in пользователь.roles:
+                if пользователь.timed_out == True:
                     await interaction.response.edit_message(content="Размьючен(а)!", view=None, embed=None)
                     await пользователь.edit(mute=False, reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
                 else:
