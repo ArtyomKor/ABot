@@ -77,7 +77,7 @@ class Moderation(commands.Cog):
             if interaction.user == ctx.author:
                 if пользователь.timed_out == True:
                     await interaction.response.edit_message(content="Размьючен(а)!", view=None, embed=None)
-                    await пользователь.edit(mute=False, reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
+                    await пользователь.timeout_for(reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}', duration=datetime.timedelta(days = 0, hours = 0, minutes = 0, seconds = 0))
                 else:
                     await interaction.response.edit_message(content="Замьючен(а)!", view=None, embed=None)
                     await пользователь.timeout_for(reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}', duration=datetime.timedelta(days = 0, hours = 0, minutes = minutes, seconds = 0))
