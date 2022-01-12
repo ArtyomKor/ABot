@@ -56,7 +56,7 @@ class Moderation(commands.Cog):
             return moders_id
     @commands.slash_command(name='admin', description='Админ панель')
     @commands.has_role(moders_ids())
-    async def admin(self, ctx, пользователь: Option(discord.Member, 'Пользователь', required=True), минут: Option(int, 'Количество минут мута.', required=True), секунд: Option(int, 'Количество секунд мута.', required=False), часов: Option(int, 'Количество часов мута.', required=False), дней: Option(int, 'Количество дней мута.', required=False)):
+    async def admin(self, ctx, пользователь: Option(discord.Member, 'Пользователь', required=True), минут: Option(int, 'Количество минут мута.', required=False), секунд: Option(int, 'Количество секунд мута.', required=False), часов: Option(int, 'Количество часов мута.', required=False), дней: Option(int, 'Количество дней мута.', required=False)):
         if минут is None:
             минут = 0
         if секунд is None:
