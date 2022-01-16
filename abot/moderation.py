@@ -139,6 +139,22 @@ class Moderation(commands.Cog):
                 await i.edit(nick=new_name)
         else:
             await ctx.respond('Выберите: убрать или поставить.')
+
+    @commands.slash_command(guild_ids=[923482206888947713], name="unban", description="Разбан")
+    async def unban(self, ctx, id: Option(str, "Id забаненного человека.", required=True)):
+        sql.execute("""SELECT moder_id FROM "settings" WHERE server_id = %s;""", [ctx.guild.id])
+        moderid = sql.fetchone()
+        moder_id = " ".join(str(x) for x in moderid)
+        moder_role = ctx.guild.get_role(int(moder_id))
+        if moder_role in ctx.author.roles:
+            ban_list = await ctx.guild.bans()
+            for i in ban_list:
+                if i.user.id == int(id):
+                    await ctx.guild.unban(i.user)
+                    await ctx.respond(content=f"{i.user} разбанен!", ephemeral=True)
+        else:
+            ctx.respond(content="Вы не администратор!", ephemeral=True)
+        
         
 def setup(bot):
     bot.add_cog(Moderation(bot))
