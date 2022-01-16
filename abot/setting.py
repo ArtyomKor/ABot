@@ -29,7 +29,7 @@ class Setting(commands.Cog):
         db = psycopg2.connect(dbname=db_name, user=db_login,
                             password=db_password, host=db_host )
         sql = db.cursor()
-        sql.execute("""SELECT EXISTS(SELECT id FROM "%s" WHERE id = %s);""", (str(member_id),))
+        sql.execute("""SELECT EXISTS(SELECT id FROM "%s" WHERE id = %s);""", (int(member.guild.id), str(member_id),))
         req = sql.fetchone()
         req1 = " ".join(str(x) for x in req)
         if req1 == "False":
