@@ -40,12 +40,16 @@ class Setting(commands.Cog):
 
     @commands.slash_command(guild_ids=[921428161022001152, 923482206888947713], name="settings", description="Установка роли администратора.")
     @commands.has_permissions(administrator=True)
-    async def setting(ctx, moder_role: Option(discord.Role, 'Роль модераторов.', required=True)):
+    async def setting(self, ctx, moder_role: Option(discord.Role, 'Роль модераторов.', required=True)):
         db = psycopg2.connect(dbname=db_name, user=db_login,
                             password=db_password, host=db_host )
         sql = db.cursor()
-        sql.execute("""UPDATE "settings" SET moder_id = %s WHERE server_id = %s;""", [moder_role.id, ctx.guild.id,])
-        db.commit()
+        try:
+            sql.execute("""UPDATE "settings" SET moder_id = %s WHERE server_id = %s;""", [moder_role.id, ctx.guild.id,])
+            db.commit()
+            await ctx.respond(content="Настройки сохранены успешно!", ephemeral=True)
+        except:
+            await ctx.respond(content="Произошла ошибка!", ephemeral=True)
         sql.close()
         db.close()
 
