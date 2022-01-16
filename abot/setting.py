@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord.commands import Option
 import psycopg2
 from config import db_login, db_host, db_name, db_password
 
@@ -16,6 +17,7 @@ class Setting(commands.Cog):
         sql.execute(
             """CREATE TABLE IF NOT EXISTS "%s" (id TEXT, bio TEXT, voice_name TEXT, vcid TEXT, catid TEXT, money BIGINT);""",
             (server,))
+        sql.execute("""INSERT INTO "settings" (server_id) VALUES (%s);""", [guild.id])
         db.commit()
         sql.close()
         db.close()
@@ -33,6 +35,17 @@ class Setting(commands.Cog):
         if req1 == "False":
             sql.execute("""INSERT INTO "%s" (id, money) VALUES (%s, 0);""", (server, str(member_id),))
             db.commit()
+        sql.close()
+        db.close()
+
+    @commands.slash_command(guild_ids=[921428161022001152, 923482206888947713], name="settings", description="Установка роли администратора.")
+    @commands.has_permissions(administrator=True)
+    async def setting(ctx, moder_role: Option(discord.Role, 'Роль модераторов.', required=True)):
+        db = psycopg2.connect(dbname=db_name, user=db_login,
+                            password=db_password, host=db_host )
+        sql = db.cursor()
+        sql.execute("""UPDATE "settings" SET moder_id = %s WHERE server_id = %s;""", [moder_role.id, ctx.guild.id,])
+        db.commit()
         sql.close()
         db.close()
 

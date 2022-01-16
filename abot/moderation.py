@@ -3,9 +3,14 @@ import discord
 from discord.ext import commands
 from discord.commands import Option
 from discord.ui import Button, View
-from config import owner_id, moder_id
+from config import owner_id
+import psycopg2
 import random
 import datetime
+
+db = psycopg2.connect(dbname="bot", user="postgres",
+                            password="pgdb270708wW@", host="45.90.217.187" )
+sql = db.cursor()
 
 code = random.randint(0, 999999999)
 
@@ -51,60 +56,61 @@ class Moderation(commands.Cog):
                 elif len(messages) == 1:
                     await ctx.respond(f'Удалено 1 сообщение!')
 
-    def moders_ids():
-        for moders_id in moder_id:
-            return moders_id
     @commands.slash_command(name='admin', description='Админ панель')
-    @commands.has_role(moders_ids())
     async def admin(self, ctx, пользователь: Option(discord.Member, 'Пользователь', required=True), минут: Option(int, 'Количество минут мута.', required=False), секунд: Option(int, 'Количество секунд мута.', required=False), часов: Option(int, 'Количество часов мута.', required=False), дней: Option(int, 'Количество дней мута.', required=False)):
-        if минут is None:
-            минут = 0
-        if секунд is None:
-            секунд = 0
-        if часов is None:
-            часов = 0
-        if дней is None:
-            дней = 0
-        id = пользователь.id
-        role = discord.utils.get(ctx.guild.roles, id=923522612066418769)
-        emb = discord.Embed(title='Админ-панель', colour=discord.Color.green())
-        emb.add_field(name='Действия', value=f'Что Вы хотите сделать с {пользователь.display_name}?')
-        kickB = Button(label='Кикнуть', style=discord.ButtonStyle.danger,row=1)
-        async def kick_callback(interaction):
-            if interaction.user == ctx.author:
-                await interaction.response.edit_message(content="Кикнут(а)!", view=None, embed=None)
-                await пользователь.kick(reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
-            else:
-                await ctx.respond('Вы не являетесь администратором!')
-        kickB.callback = kick_callback
-        if пользователь.timed_out == True:
-            muteB = Button(label='Размьютить', style=discord.ButtonStyle.success,row=1)
-        else:
-            muteB = Button(label='Замьютить', style=discord.ButtonStyle.danger,row=1)
-        async def mute_callback(interaction):
-            if interaction.user == ctx.author:
-                if пользователь.timed_out == True:
-                    await interaction.response.edit_message(content="Размьючен(а)!", view=None, embed=None)
-                    await пользователь.timeout_for(reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}', duration=datetime.timedelta(days = 0, hours = 0, minutes = 0, seconds = 0))
+        sql.execute("""SELECT moder_id FROM "settings" WHERE server_id = %s;""", [ctx.guild.id])
+        moderid = sql.fetchone()
+        moder_id = " ".join(str(x) for x in moderid)
+        moder_role = ctx.guild.get_role(int(moder_id))
+        if moder_role in ctx.author.roles:
+            if минут is None:
+                минут = 0
+            if секунд is None:
+                секунд = 0
+            if часов is None:
+                часов = 0
+            if дней is None:
+                дней = 0
+            emb = discord.Embed(title='Админ-панель', colour=discord.Color.green())
+            emb.add_field(name='Действия', value=f'Что Вы хотите сделать с {пользователь.display_name}?')
+            kickB = Button(label='Кикнуть', style=discord.ButtonStyle.danger,row=1)
+            async def kick_callback(interaction):
+                if interaction.user == ctx.author:
+                    await interaction.response.edit_message(content="Кикнут(а)!", view=None, embed=None)
+                    await пользователь.kick(reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
                 else:
-                    await interaction.response.edit_message(content="Замьючен(а)!", view=None, embed=None)
-                    await пользователь.timeout_for(reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}', duration=datetime.timedelta(days = дней, hours = часов, minutes = минут, seconds = секунд))
+                    await ctx.respond('Вы не являетесь администратором!', ephemeral=True)
+            kickB.callback = kick_callback
+            if пользователь.timed_out == True:
+                muteB = Button(label='Размьютить', style=discord.ButtonStyle.success,row=1)
             else:
-                await ctx.respond('Вы не являетесь администратором!')
-        muteB.callback = mute_callback
-        banB = Button(label='Забанить', style=discord.ButtonStyle.danger,row=1)
-        async def ban_callback(interaction):
-            if interaction.user == ctx.author:
-                await interaction.response.edit_message(content="Забанен(а)!", view=None, embed=None)
-                await пользователь.ban(reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
-            else:
-                await ctx.respond('Вы не являетесь администратором!')
-        banB.callback = ban_callback
-        view = View()
-        view.add_item(kickB)
-        view.add_item(muteB)
-        view.add_item(banB)
-        await ctx.respond(embed=emb,view=view, ephemeral=True)
+                muteB = Button(label='Замьютить', style=discord.ButtonStyle.danger,row=1)
+            async def mute_callback(interaction):
+                if interaction.user == ctx.author:
+                    if пользователь.timed_out == True:
+                        await interaction.response.edit_message(content="Размьючен(а)!", view=None, embed=None)
+                        await пользователь.timeout_for(reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}', duration=datetime.timedelta(days = 0, hours = 0, minutes = 0, seconds = 0))
+                    else:
+                        await interaction.response.edit_message(content="Замьючен(а)!", view=None, embed=None)
+                        await пользователь.timeout_for(reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}', duration=datetime.timedelta(days = дней, hours = часов, minutes = минут, seconds = секунд))
+                else:
+                    await ctx.respond('Вы не являетесь администратором!', ephemeral=True)
+            muteB.callback = mute_callback
+            banB = Button(label='Забанить', style=discord.ButtonStyle.danger,row=1)
+            async def ban_callback(interaction):
+                if interaction.user == ctx.author:
+                    await interaction.response.edit_message(content="Забанен(а)!", view=None, embed=None)
+                    await пользователь.ban(reason=f'ABot, с наилучшими пожеланиями от {ctx.author.display_name}')
+                else:
+                    await ctx.respond('Вы не являетесь администратором!', ephemeral=True)
+            banB.callback = ban_callback
+            view = View()
+            view.add_item(kickB)
+            view.add_item(muteB)
+            view.add_item(banB)
+            await ctx.respond(embed=emb,view=view, ephemeral=True)
+        else:
+            await ctx.respond('Вы не являетесь администратором!', ephemeral=True)
 
     async def addorremove(ctx: discord.AutocompleteContext):
         vibor=["убрать", "поставить"]
