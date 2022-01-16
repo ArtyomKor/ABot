@@ -140,7 +140,7 @@ class Moderation(commands.Cog):
         else:
             await ctx.respond('Выберите: убрать или поставить.')
 
-    @commands.slash_command(guild_ids=[923482206888947713], name="unban", description="Разбан")
+    @commands.slash_command(name="unban", description="Разбан")
     async def unban(self, ctx, id: Option(str, "Id забаненного человека.", required=True)):
         sql.execute("""SELECT moder_id FROM "settings" WHERE server_id = %s;""", [ctx.guild.id])
         moderid = sql.fetchone()

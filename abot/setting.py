@@ -38,7 +38,7 @@ class Setting(commands.Cog):
         sql.close()
         db.close()
 
-    @commands.slash_command(guild_ids=[921428161022001152, 923482206888947713], name="settings", description="Установка роли администратора.")
+    @commands.slash_command(name="settings", description="Установка роли администратора.")
     @commands.has_permissions(administrator=True)
     async def setting(self, ctx, moder_role: Option(discord.Role, 'Роль модераторов.', required=True)):
         db = psycopg2.connect(dbname=db_name, user=db_login,
