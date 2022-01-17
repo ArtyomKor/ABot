@@ -53,24 +53,27 @@ class Voice(commands.Cog):
     async def name(self, ctx, имя: Option(str, 'Новое имя канала.', required=True)):
         name = имя
         try:
-            db = psycopg2.connect(dbname=db_name, user=db_login,
-                            password=db_password, host=db_host )
-            sql = db.cursor()
-            server = ctx.guild.id
-            member_id = ctx.author.id
-            sql.execute("""SELECT EXISTS(SELECT voice_name FROM "%s" WHERE id = %s);""", (server, str(member_id),))
-            req = sql.fetchone()
-            if req == "(False,)":
-                sql.execute("""INSERT INTO "%s" (id, voice_name) VALUES (%s, %s);""", (server, str(member_id), name,))
-                db.commit()
+            if ctx.author.voice.channel.id in voices:
+                db = psycopg2.connect(dbname=db_name, user=db_login,
+                                password=db_password, host=db_host )
+                sql = db.cursor()
+                server = ctx.guild.id
+                member_id = ctx.author.id
+                sql.execute("""SELECT EXISTS(SELECT voice_name FROM "%s" WHERE id = %s);""", (server, str(member_id),))
+                req = sql.fetchone()
+                if req == "(False,)":
+                    sql.execute("""INSERT INTO "%s" (id, voice_name) VALUES (%s, %s);""", (server, str(member_id), name,))
+                    db.commit()
+                else:
+                    sql.execute("""UPDATE "%s" SET voice_name = %s WHERE id = %s;""", (server, str(name), str(member_id)))
+                    db.commit()
+                sql.close()
+                db.close()
+                channel = ctx.author.voice.channel
+                await channel.edit(name=name)
+                await ctx.respond('Успешно!', ephemeral=True)
             else:
-                sql.execute("""UPDATE "%s" SET voice_name = %s WHERE id = %s;""", (server, str(name), str(member_id)))
-                db.commit()
-            sql.close()
-            db.close()
-            channel = ctx.author.voice.channel
-            await channel.edit(name=name)
-            await ctx.respond('Успешно!', ephemeral=True)
+                await ctx.respond('Вы находитесь не в временном канале!', ephemeral=True)
         except Exception as error:
             await ctx.respond(
                 "Вы не находитесь в голосовом канале!",ephemeral=True)
@@ -80,9 +83,12 @@ class Voice(commands.Cog):
                                     default=0)):
         limit = лимит
         try:
-            channel = ctx.author.voice.channel
-            await channel.edit(user_limit=limit)
-            await ctx.respond('Успешно!',ephemeral=True)
+            if ctx.author.voice.channel.id in voices:
+                channel = ctx.author.voice.channel
+                await channel.edit(user_limit=limit)
+                await ctx.respond('Успешно!',ephemeral=True)
+            else:
+                await ctx.respond('Вы находитесь не в временном канале!', ephemeral=True)
         except:
             if limit >= 100:
                 await ctx.respond('Максимальный лимит 99!',ephemeral=True)
