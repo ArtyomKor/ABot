@@ -32,7 +32,8 @@ class Voice(commands.Cog):
             catId =sql.fetchone()
             cat_Id = " ".join(str(x) for x in catId)
             print(cat_Id)
-            if name is None:
+            name_old = " ".join(str(x) for x in name)
+            if name_old == "None":
                 name_channel = f'Голосовой канал {member}'
             else:
                 name_channel = " ".join(str(x) for x in name)
@@ -69,10 +70,10 @@ class Voice(commands.Cog):
             db.close()
             channel = ctx.author.voice.channel
             await channel.edit(name=name)
-            await ctx.respond('Успешно!')
+            await ctx.respond('Успешно!', ephemeral=True)
         except Exception as error:
             await ctx.respond(
-                "Вы не находитесь в голосовом канале!")
+                "Вы не находитесь в голосовом канале!",ephemeral=True)
 
     @commands.slash_command(name='limit', description='Установка лимита в голосовом канале.')
     async def limit(self, ctx, лимит: Option(int, 'Количество максимальных пользователей. 0 - бесконечно.', required=False,
@@ -81,12 +82,12 @@ class Voice(commands.Cog):
         try:
             channel = ctx.author.voice.channel
             await channel.edit(user_limit=limit)
-            await ctx.respond('Успешно!')
+            await ctx.respond('Успешно!',ephemeral=True)
         except:
             if limit >= 100:
-                await ctx.respond('Максимальный лимит 99!')
+                await ctx.respond('Максимальный лимит 99!',ephemeral=True)
             elif limit <= 99:
-                await ctx.respond("Вы не находитесь в голосовом канале!")
+                await ctx.respond("Вы не находитесь в голосовом канале!",ephemeral=True)
 
     @commands.slash_command(name='idvoice', description='Установить id голосовго канала для создания другого голосового канала.')
     @commands.has_permissions(administrator=True)
@@ -103,9 +104,9 @@ class Voice(commands.Cog):
         try:
             sql.execute("""INSERT INTO "%s" (id, vcid, catid) VALUES (%s, %s, %s);""", (server, str(server), str(id), str(catid),))
             db.commit()
-            await ctx.respond('Успешно!')
+            await ctx.respond('Успешно!',ephemeral=True)
         except:
-            await ctx.respond('Ошибка.')
+            await ctx.respond('Ошибка.',ephemeral=True)
 
     @commands.slash_command(name='status', description='Узнать состояние сервера.')
     async def status(self, ctx):
@@ -116,7 +117,7 @@ class Voice(commands.Cog):
         emb.add_field(name='Информация о сервере', value=f'Загрузка ЦП: `{cpu}%`\n'
                                                         f'RAM: `{psutil.virtual_memory().used // 1024 // 1024} МБ`/`{psutil.virtual_memory().total // 1024 // 1024} МБ`\n')
         emb.add_field(name='Временных каналов', value=f'{len(voices)}')
-        await ctx.respond(embed=emb)
+        await ctx.respond(embed=emb,ephemeral=True)
 
 def setup(bot):
     bot.add_cog(Voice(bot))
