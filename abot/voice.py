@@ -25,7 +25,7 @@ class Voice(commands.Cog):
         create_id=sql.fetchone()
         createId = " ".join(str(x) for x in create_id)
         create = discord.utils.get(guild.voice_channels, id=int(createId))
-        if before.channel is None and after.channel is create:
+        if before.channel is not create and after.channel is create:
             sql.execute("""SELECT voice_name FROM "%s" WHERE id = %s;""", (server_id, str(member_id),))
             name = sql.fetchone()
             sql.execute("""SELECT catid FROM "%s" WHERE id = %s;""", (server_id, str(server_id)))
