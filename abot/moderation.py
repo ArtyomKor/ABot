@@ -128,7 +128,7 @@ class Moderation(commands.Cog):
         if выбор == "убрать":
             await ctx.respond('Начинаю...')
             for i in server_members:
-                if i.bot is True:
+                if i.bot is True or i.top_role.permissions.administrator == True:
                     pass
                 else:
                     name = i.display_name
@@ -137,7 +137,7 @@ class Moderation(commands.Cog):
         elif выбор == "поставить":
             await ctx.respond('Начинаю...')
             for i in server_members:
-                if i.bot is True:
+                if i.bot is True or i.top_role.permissions.administrator == True:
                     pass
                 else:
                     name = i.display_name
