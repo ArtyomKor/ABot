@@ -34,7 +34,7 @@ class Voice(commands.Cog):
             print(cat_Id)
             name_old = " ".join(str(x) for x in name)
             if name_old == "None":
-                name_channel = f'Голосовой канал {member}'
+                name_channel = f'Голосовой канал {member.display_name}'
             else:
                 name_channel = " ".join(str(x) for x in name)
             category = discord.utils.get(guild.categories, id=int(cat_Id))
