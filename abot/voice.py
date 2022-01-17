@@ -90,7 +90,9 @@ class Voice(commands.Cog):
 
     @commands.slash_command(name='idvoice', description='Установить id голосовго канала для создания другого голосового канала.')
     @commands.has_permissions(administrator=True)
-    async def vccreate(self, ctx, id: Option(str, 'id канала', required=True), catid: Option(str, 'id категории', required=True)):
+    async def vccreate(self, ctx, канал: Option(discord.VoiceChannel, 'id канала', required=True), категория: Option(discord.CategoryChannel, 'id категории', required=True)):
+        id = канал.id
+        catid = категория.id
         server=ctx.guild.id
         db = psycopg2.connect(dbname=db_name, user=db_login,
                             password=db_password, host=db_host )
@@ -99,7 +101,7 @@ class Voice(commands.Cog):
         req = sql.fetchone()
         print(req)
         try:
-            sql.execute("""INSERT INTO "%s" (id, vcid, catid) VALUES (%s, %s, %s);""", (server, str(server), id,catid,))
+            sql.execute("""INSERT INTO "%s" (id, vcid, catid) VALUES (%s, %s, %s);""", (server, str(server), str(id), str(catid),))
             db.commit()
             await ctx.respond('Успешно!')
         except:
