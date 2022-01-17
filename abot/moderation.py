@@ -128,15 +128,21 @@ class Moderation(commands.Cog):
         if выбор == "убрать":
             await ctx.respond('Начинаю...')
             for i in server_members:
-                name = i.display_name
-                new_name = name.replace("🎄", "")
-                await i.edit(nick=new_name)
+                if i.bot is True:
+                    pass
+                else:
+                    name = i.display_name
+                    new_name = name.replace("🎄", "")
+                    await i.edit(nick=new_name)
         elif выбор == "поставить":
             await ctx.respond('Начинаю...')
             for i in server_members:
-                name = i.display_name
-                new_name = "🎄"+ name + "🎄"
-                await i.edit(nick=new_name)
+                if i.bot is True:
+                    pass
+                else:
+                    name = i.display_name
+                    new_name = "🎄"+ name + "🎄"
+                    await i.edit(nick=new_name)
         else:
             await ctx.respond('Выберите: убрать или поставить.')
 
@@ -151,7 +157,7 @@ class Moderation(commands.Cog):
             for i in ban_list:
                 if i.user.id == int(id):
                     await ctx.guild.unban(i.user)
-                    await ctx.respond(content=f"{i.user} разбанен!", ephemeral=True)
+                    await ctx.respond(content=f"{i.user.name} разбанен!", ephemeral=True)
         else:
             ctx.respond(content="Вы не администратор!", ephemeral=True)
         
