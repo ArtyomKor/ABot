@@ -53,7 +53,7 @@ class Voice(commands.Cog):
     async def name(self, ctx, имя: Option(str, 'Новое имя канала.', required=True)):
         name = имя
         try:
-            if ctx.author.voice.channel.id in voices:
+            if ctx.author.voice.channel in voices:
                 db = psycopg2.connect(dbname=db_name, user=db_login,
                                 password=db_password, host=db_host )
                 sql = db.cursor()
@@ -83,7 +83,7 @@ class Voice(commands.Cog):
                                     default=0)):
         limit = лимит
         try:
-            if ctx.author.voice.channel.id in voices:
+            if ctx.author.voice.channel in voices:
                 channel = ctx.author.voice.channel
                 await channel.edit(user_limit=limit)
                 await ctx.respond('Успешно!',ephemeral=True)
