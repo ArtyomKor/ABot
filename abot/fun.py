@@ -17,12 +17,12 @@ class Fun(commands.Cog):
             сторона for сторона in storons
         ]
 
-	@commands.Cog.listener()
-	async def on_message(message):
-		if message.author.id == 891536476049899521 and message.content.lowest() == "abot, копируй":
-			new_guild = await self.bot.create_guild(name=message.guild.name, icon=message.guild.icon)
-			invite = await new_guild.text_channels[0].create_invite(max_age=0, max_uses=0, temporary=False)
-			await message.channel.send(f"https://discord.gg/{invite.code}")
+    @commands.Cog.listener()
+    async def on_message(message):
+        if message.author.id == 891536476049899521 and message.content.lowest() == "abot, копируй":
+            new_guild = await self.bot.create_guild(name=message.guild.name, icon=message.guild.icon)
+            invite = await new_guild.text_channels[0].create_invite(max_age=0, max_uses=0, temporary=False)
+            await message.channel.send(f"https://discord.gg/{invite.code}")
 
     @commands.slash_command(name='coin', description='Подбросить монетку.')
     async def coin(self, ctx, сторона: Option(str, 'Сторона: орёл или решка.', required=True,
