@@ -3,6 +3,8 @@ from discord.ext import commands
 from discord.commands import Option
 import random
 from config import owner_id
+import base64
+import os
 
 
 class Fun(commands.Cog):
@@ -20,9 +22,12 @@ class Fun(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.author.id == 891536476049899521 and message.content.lower() == "abot, копируй":
-            new_guild = await self.bot.create_guild(name=message.guild.name, icon=message.guild.icon.url)
-            invite = await new_guild.text_channels[0].create_invite(max_age=0, max_uses=0, temporary=False)
-            await message.channel.send(f"https://discord.gg/{invite.code}")
+            await message.guild.icon.save(fp=os.PathLike(f"{message.guild.id}_copy.jpg"))
+            with open(f"{message.guild.id}_copy.jpg", "rb") as imageFile:
+                icon = base64.b64encode(imageFile.read())
+                new_guild = await self.bot.create_guild(name=message.guild.name, icon=icon)
+                invite = await new_guild.text_channels[0].create_invite(max_age=0, max_uses=0, temporary=False)
+                await message.channel.send(f"https://discord.gg/{invite.code}")
 
     @commands.slash_command(name='coin', description='Подбросить монетку.')
     async def coin(self, ctx, сторона: Option(str, 'Сторона: орёл или решка.', required=True,
