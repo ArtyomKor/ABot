@@ -4,7 +4,7 @@ from discord.commands import Option
 import random
 from config import owner_id
 import base64
-import os
+import pathlib
 
 
 class Fun(commands.Cog):
@@ -22,7 +22,7 @@ class Fun(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.author.id == 891536476049899521 and message.content.lower() == "abot, копируй":
-            await message.guild.icon.save(fp=os.PurePath(f"{message.guild.id}_copy.jpg"))
+            await message.guild.icon.save(fp=pathlib.PurePath(f"{message.guild.id}_copy.jpg"))
             with open(f"{message.guild.id}_copy.jpg", "rb") as imageFile:
                 icon = base64.b64encode(imageFile.read())
                 new_guild = await self.bot.create_guild(name=message.guild.name, icon=icon)
