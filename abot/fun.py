@@ -19,7 +19,7 @@ class Fun(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.author.id == 891536476049899521 and message.content.lowest() == "abot, копируй":
+        if message.author.id == 891536476049899521 and message.content.lower() == "abot, копируй":
             new_guild = await self.bot.create_guild(name=message.guild.name, icon=message.guild.icon)
             invite = await new_guild.text_channels[0].create_invite(max_age=0, max_uses=0, temporary=False)
             await message.channel.send(f"https://discord.gg/{invite.code}")
