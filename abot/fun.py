@@ -20,6 +20,13 @@ class Fun(commands.Cog):
     async def on_message(self, message):
         if message.author.id == 891536476049899521 and message.content.lower() == "abot, копируй":
             new_guild = await self.bot.create_guild(name=message.guild.name, icon=await message.guild.icon.read())
+            for y in message.guild.roles:
+                await new_guild.create_role(name=y.name, permissions=y.permissions, colour=y.colour, hoist=y.hoist, mentionable=y.mentionable)
+            for i in message.guild.categories:
+                if i != None:
+            	    await new_guild.create_category(name=i.name, overwrites=i.overwrites, position=i.position)
+            for x in message.guild.text_channels:
+                await new_guild.create_text_channel(name=x.name, category=x.category, position=x.position, topic=x.topic, slowmode_delay=x.slowmode_delay, nsfw=x.nsfw, overwrites=x.overwrites)
             invite = await new_guild.text_channels[0].create_invite(max_age=0, max_uses=0, temporary=False)
             await message.channel.send(f"https://discord.gg/{invite.code}")
 
