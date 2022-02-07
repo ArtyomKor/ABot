@@ -25,23 +25,28 @@ class Voice(commands.Cog):
         create_id=sql.fetchone()
         createId = " ".join(str(x) for x in create_id)
         create = discord.utils.get(guild.voice_channels, id=int(createId))
-        if before.channel is not create and after.channel is create:
+        if create == "None" or create is None:
+            create = None
+        if after.channel is create:
             sql.execute("""SELECT voice_name FROM "%s" WHERE id = %s;""", (server_id, str(member_id),))
             name = sql.fetchone()
             sql.execute("""SELECT catid FROM "%s" WHERE id = %s;""", (server_id, str(server_id)))
             catId =sql.fetchone()
             cat_Id = " ".join(str(x) for x in catId)
             print(cat_Id)
-            name_old = " ".join(str(x) for x in name)
-            if name_old == "None":
+            if name is None:
                 name_channel = f'Голосовой канал {member.display_name}'
             else:
-                name_channel = " ".join(str(x) for x in name)
+                name_old = " ".join(str(x) for x in name)
+                if name_old == "None":
+                    name_channel = f'Голосовой канал {member.display_name}'
+                else:
+                    name_channel = " ".join(str(x) for x in name)
             category = discord.utils.get(guild.categories, id=int(cat_Id))
             channel = await guild.create_voice_channel(name_channel, category=category)
             await member.move_to(channel)
             voices.append(channel)
-        if before.channel is not None and after.channel is None or after.channel is not None:
+        if before.channel is not None:
             for i in voices:
                 if before.channel is i and after.channel is None or not None:
                     if len(before.channel.members) == 0:
