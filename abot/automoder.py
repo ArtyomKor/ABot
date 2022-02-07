@@ -26,7 +26,7 @@ class AutoModer(commands.Cog):
 		
     @commands.Cog.listener()
     async def on_message(self, message):
-        orig_message = message.content
+        orig_message = str(message.content)
         message = ''.join(char for char in str(orig_message) if char.isalnum())
         sql.execute("""SELECT moder_id FROM "settings" WHERE server_id = %s;""", [message.guild.id])
         moderid = sql.fetchone()
