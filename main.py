@@ -10,6 +10,7 @@ bot.load_extension("abot.fun")
 bot.load_extension("abot.info")
 bot.load_extension("abot.voice")
 bot.load_extension("abot.moderation")
+bot.load_extension("abot.automoder")
 
 @bot.event
 async def on_ready():
