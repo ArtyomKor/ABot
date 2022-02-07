@@ -24,7 +24,7 @@ class AutoModer(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 		
-	@commands.Cog.listener()
+    @commands.Cog.listener()
 	async def on_message(self, message):
         sql.execute("""SELECT moder_id FROM "settings" WHERE server_id = %s;""", [message.guild.id])
         moderid = sql.fetchone()
