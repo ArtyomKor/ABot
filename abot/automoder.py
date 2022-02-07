@@ -30,7 +30,7 @@ class AutoModer(commands.Cog):
         moderid = sql.fetchone()
         moder_id = " ".join(str(x) for x in moderid)
         moder_role = message.guild.get_role(int(moder_id))
-        if await checkmute(message):
+        if await checkmute(message.content):
             await message.author.timeout_for(timedelta(minutes=5), reason="Авто-модерация")
 
 def setup(bot):
