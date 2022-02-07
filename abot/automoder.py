@@ -6,14 +6,12 @@ from config import *
 
 async def checkmute(message):
     if len(message) >= 7:
-        proc = 0
-        upper = 0
-        for i in message:
-            if i.isalpha() and i.isupper():
-                upper += 1
-                proc = upper / len(message) * 100
-        if int(proc) >= 75: return True
-        else: return False
+        p = 0
+        for i in range(len(message.content)):
+            if message.content[i] == message.content.upper()[i]:
+                p += 1
+        if int(p/len(message.content)*100) >= 40: return True
+
     else: return False
 
 db = psycopg2.connect(dbname=db_name, user=db_login,
