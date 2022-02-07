@@ -25,10 +25,13 @@ class AutoModer(commands.Cog):
         self.bot = bot
 		
 	@commands.Cog.listener()
-	async def on_message(message):
+	async def on_message(self, message):
         sql.execute("""SELECT moder_id FROM "settings" WHERE server_id = %s;""", [message.guild.id])
         moderid = sql.fetchone()
         moder_id = " ".join(str(x) for x in moderid)
         moder_role = message.guild.get_role(int(moder_id))
         if await checkmute(message):
             await message.author.timeout_for(timedelta(minutes=5), reason="Авто-модерация")
+
+def setup(bot):
+    bot.add_cog(AutoModer(bot))
