@@ -32,6 +32,7 @@ class AutoModer(commands.Cog):
         moder_role = message.guild.get_role(int(moder_id))
         if await checkmute(message.content):
             await message.author.timeout_for(timedelta(minutes=5), reason="Авто-модерация")
+        print(message.content)
 
 def setup(bot):
     bot.add_cog(AutoModer(bot))
