@@ -44,8 +44,9 @@ class Voice(commands.Cog):
                     name_channel = " ".join(str(x) for x in name)
             category = discord.utils.get(guild.categories, id=int(cat_Id))
             channel = await guild.create_voice_channel(name_channel, category=category)
-            await member.move_to(channel)
-            voices.append(channel)
+            if member.voice.channel is not None:
+                await member.move_to(channel)
+                voices.append(channel)
         if before.channel is not None:
             for i in voices:
                 if before.channel is i and after.channel is None or not None:
