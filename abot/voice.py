@@ -30,6 +30,7 @@ class Voice(commands.Cog):
         if after.channel is create:
             sql.execute("""SELECT voice_name FROM "%s" WHERE id = %s;""", (server_id, str(member_id),))
             name = sql.fetchone()
+            print(name)
             sql.execute("""SELECT catid FROM "%s" WHERE id = %s;""", (server_id, str(server_id)))
             catId =sql.fetchone()
             cat_Id = " ".join(str(x) for x in catId)
@@ -38,7 +39,7 @@ class Voice(commands.Cog):
                 name_channel = f'Голосовой канал {member.display_name}'
             else:
                 name_old = " ".join(str(x) for x in name)
-                if name_old == "None":
+                if name_old == "first setting name":
                     name_channel = f'Голосовой канал {member.display_name}'
                 else:
                     name_channel = " ".join(str(x) for x in name)
@@ -46,20 +47,19 @@ class Voice(commands.Cog):
             if member.voice.channel is not None:
                 channel = await guild.create_voice_channel(name_channel, category=category)
                 await member.move_to(channel)
-                voices.append(channel)
+                voices.append(channel.id)
         if before.channel is not None:
-            for i in voices:
-                if before.channel is i:
-                    if len(before.channel.members) == 0:
-                        await before.channel.delete()
-                        vindex = voices.index(i)
-                        voices.pop(vindex)
+            if before.channel.id in voices:
+                if len(before.channel.members) == 0:
+                    await before.channel.delete()
+                    vindex = voices.index(before.channel.id)
+                    voices.pop(vindex)
 
     @commands.slash_command(name='name', description='Установка имени голосового канала.')
     async def name(self, ctx, имя: Option(str, 'Новое имя канала.', required=True)):
         name = имя
         try:
-            if ctx.author.voice.channel in voices:
+            if ctx.author.voice.channel.id in voices:
                 db = psycopg2.connect(dbname=db_name, user=db_login,
                                 password=db_password, host=db_host )
                 sql = db.cursor()
@@ -89,7 +89,7 @@ class Voice(commands.Cog):
                                     default=0)):
         limit = лимит
         try:
-            if ctx.author.voice.channel in voices:
+            if ctx.author.voice.channel.id in voices:
                 channel = ctx.author.voice.channel
                 await channel.edit(user_limit=limit)
                 await ctx.respond('Успешно!',ephemeral=True)

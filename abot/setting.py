@@ -18,6 +18,8 @@ class Setting(commands.Cog):
             """CREATE TABLE IF NOT EXISTS "%s" (id TEXT, bio TEXT, voice_name TEXT, vcid TEXT, catid TEXT, money BIGINT);""",
             (server,))
         sql.execute("""INSERT INTO "settings" (server_id) VALUES (%s);""", [guild.id])
+        for i in guild.members:
+            sql.execute("""INSERT INTO "%s"(id, money, bio, voice_name) VALUES (%s, %s, %s, %s);""", (guild.id, str(i.id), 0, "Тут ничего нет! Но вы можете добавить свой текст сюда с помощью /bio", "first setting name",))
         db.commit()
         sql.close()
         db.close()
@@ -33,7 +35,7 @@ class Setting(commands.Cog):
         req = sql.fetchone()
         req1 = " ".join(str(x) for x in req)
         if req1 == "False":
-            sql.execute("""INSERT INTO "%s" (id, money) VALUES (%s, 0);""", (server, str(member_id),))
+            sql.execute("""INSERT INTO "%s" (id, money, voice_name) VALUES (%s, 0, %s);""", (server, str(member_id), "first setting name",))
             db.commit()
         sql.close()
         db.close()
