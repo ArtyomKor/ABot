@@ -29,8 +29,6 @@ class Ping(commands.Cog):
                     await message.channel.send(content=f"{message.author.mention}, ты его зачем звал?", delete_after=float(10))
                     await message.channel.send(content="https://cdn.discordapp.com/attachments/679090175132827679/779746133651095572/image0-1.gif", delete_after=float(10))
                 except: pass
-        if message.content == "https://media.discordapp.net/attachments/796866823391543320/912296655200612362/gif_6.gif" and mist_func == "False" and message.author.id == 472723520372342814:
-            mist_func = "True"
         if mist_func == "True" and message.author.id == 472723520372342814:
             mist_func = "False"
             try:
@@ -43,6 +41,9 @@ class Ping(commands.Cog):
                 print(error)
                 channel = await message.guild.fetch_channel(943834485332512818)
                 await channel.send(content=f"Ой! Произошла ошибка!\n```{error}```")
+            return
+        if message.content == "https://media.discordapp.net/attachments/796866823391543320/912296655200612362/gif_6.gif" and mist_func == "False" and message.author.id == 472723520372342814:
+            mist_func = "True"
         print(message.content)
 
     @commands.Cog.listener()
