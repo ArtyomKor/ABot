@@ -13,8 +13,8 @@ class MyModal(Modal):
                 value="Большой\nПрям очень большой",
                 style=discord.InputTextStyle.long,
             )
-        self.add_item(discord.Attachment)
         )
+        self.add_item(discord.Attachment)
 
     async def callback(self, interaction: discord.Interaction):
         embed = discord.Embed(title="Мнение опрошенных", color=discord.Color.random())
