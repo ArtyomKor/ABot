@@ -19,7 +19,7 @@ class MyModal(Modal):
         embed = discord.Embed(title="Мнение опрошенных", color=discord.Color.random())
         embed.add_field(name="На что первым похуй", value=self.children[0].value, inline=False)
         embed.add_field(name="На что вторым", value=self.children[1].value, inline=False)
-        embed.add_field(name="пикча", value="[вроде текст](а это ссылка)")
+        embed.add_field(name="пикча", value="[https://youtube.com](https://yandex.ru)")
         await interaction.response.send_message(embeds=[embed])
         
 class Test(commands.Cog):
