@@ -5,20 +5,20 @@ from discord.ui import Modal, InputText
 class MyModal(Modal):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.add_item(InputText(label="Short Input", placeholder="Placeholder Test"))
+        self.add_item(InputText(label="Бомбящая жаба пидор", placeholder="Хуй соси"))
 
         self.add_item(
             InputText(
-                label="Longer Input",
-                value="Longer Value\nSuper Long Value",
+                label="Вывод как длина члена",
+                value="Большой\nПрям очень большой",
                 style=discord.InputTextStyle.long,
             )
         )
 
     async def callback(self, interaction: discord.Interaction):
-        embed = discord.Embed(title="Your Modal Results", color=discord.Color.random())
-        embed.add_field(name="First Input", value=self.children[0].value, inline=False)
-        embed.add_field(name="Second Input", value=self.children[1].value, inline=False)
+        embed = discord.Embed(title="Мнение опрошенных", color=discord.Color.random())
+        embed.add_field(name="На что первым похуй", value=self.children[0].value, inline=False)
+        embed.add_field(name="На что вторым", value=self.children[1].value, inline=False)
         await interaction.response.send_message(embeds=[embed])
         
 class Test(commands.Cog):
