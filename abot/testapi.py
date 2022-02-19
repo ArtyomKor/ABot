@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord.ui import Modal, InputText
 
 class MyModal(Modal):
     def __init__(self, *args, **kwargs) -> None:
