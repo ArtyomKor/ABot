@@ -13,13 +13,14 @@ class MyModal(Modal):
                 value="Большой\nПрям очень большой",
                 style=discord.InputTextStyle.long,
             )
+        self.add_item(discord.Attachment)
         )
 
     async def callback(self, interaction: discord.Interaction):
         embed = discord.Embed(title="Мнение опрошенных", color=discord.Color.random())
         embed.add_field(name="На что первым похуй", value=self.children[0].value, inline=False)
         embed.add_field(name="На что вторым", value=self.children[1].value, inline=False)
-        embed.add_field(name="пикча", value="[https://youtube.com](https://yandex.ru)")
+        embed.add_field(name="пикча", value=f"[Ссылка на изображение]({self.children[2].url})")
         await interaction.response.send_message(embeds=[embed])
         
 class Test(commands.Cog):
