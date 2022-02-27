@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord.commands import Option
 import psycopg2
+from config import db_login, db_host, db_name, db_password
 
 class Info(commands.Cog):
     def __init__(self, bot):
@@ -9,8 +10,8 @@ class Info(commands.Cog):
 
     @commands.slash_command(name='user', description='Вывести информацию о пользователе.')
     async def user(self, ctx, пользователь: Option(discord.Member, 'Пользователь', required=False, default=None)):
-        db = psycopg2.connect(dbname='bot', user='postgres',
-                            password='pgdb270708wW@', host='45.90.217.187' )
+        db = psycopg2.connect(dbname=db_name, user=db_login,
+                            password=db_password, host=db_host )
         sql = db.cursor()
         if пользователь is None:
             пользователь = await ctx.guild.fetch_member(ctx.author.id)
