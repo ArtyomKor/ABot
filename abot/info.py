@@ -13,7 +13,7 @@ class Info(commands.Cog):
                             password='pgdb270708wW@', host='45.90.217.187' )
         sql = db.cursor()
         if пользователь is None:
-            пользователь = ctx.author
+            пользователь = await ctx.guild.fetch_member(ctx.author.id)
         author = пользователь.id
         command = """SELECT bio FROM "%s" WHERE id = %s;"""
         server = ctx.guild.id
