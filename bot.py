@@ -1,6 +1,6 @@
 config = open("config.ini", "r", encoding="utf-8")
 
-TOKEN = config.readlines[0]
+TOKEN = config.readlines()[0]
 
 import discord
 
