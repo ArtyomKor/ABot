@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from discord.commands import slash_command, message_command
+from discord import app_commands
 import sqlite3
 
 class User(commands.Cog):
@@ -10,7 +10,7 @@ class User(commands.Cog):
         self.sql = self.db.cursor()
         print("user.py connected!")
 
-    @message_command()
+    @commands.command()
     async def user(self, ctx, message: discord.Message):
         match message.author.status:
             case discord.Status.online: status = "<:online:979549939573088286> В сети"

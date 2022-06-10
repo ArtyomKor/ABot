@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from discord.commands import slash_command
+from discord import app_commands
 import sqlite3
 from ABot.cache import VoiceCache
 
@@ -22,31 +22,34 @@ class Channels(commands.Cog):
                 for voice in voices:
                     await self.voices.append_channel_name(author=voice[0], name=voice[2], guild=guild[0])
 
-    @slash_command(description="Очистить канал на определённое количество сообщений")
-    async def clear(self, ctx: discord.commands.context.ApplicationContext, count: discord.Option(int, "Количество сообщений для удаления")):
-        deleted = await ctx.interaction.channel.purge(limit=count)
-        await ctx.respond(f'Удалено {len(deleted)} сообщений(ия, ие)!', ephemeral=True)
+    @commands.hybrid_command(description="Очистить канал на определённое количество сообщений")
+    @app_commands.describe(count="Количество сообщений для удаления.")
+    async def clear(self, interaction: commands.Context, count: int):
+        deleted = await interaction.channel.purge(limit=count)
+        await interaction.send(f'Удалено {len(deleted)} сообщений(ия, ие)!', ephemeral=True)
     
-    @slash_command(description="Установить имя для своего голосового канала")
-    async def name(self, ctx: discord.commands.context.ApplicationContext, name: str):
-        if ctx.author.voice != None:
-            if (ctx.author.id, ctx.author.voice.channel.id) in self.voices.channels.items():
-                await ctx.author.voice.channel.edit(name=name)
+    @commands.hybrid_command(description="Установить имя для своего голосового канала")
+    @app_commands.describe(name="Имя для голосового канала.")
+    async def name(self, interaction: commands.Context, name: str):
+        if interaction.author.voice != None:
+            if (interaction.author.id, interaction.author.voice.channel.id) in self.voices.channels.items():
+                await interaction.author.voice.channel.edit(name=name)
             else:
-                await ctx.respond("Этот канал принадлежит не Вам!", ephemeral=True)
+                await interaction.send("Этот канал принадлежит не Вам!", ephemeral=True)
         self.sql.execute("SELECT name FROM sqlite_master WHERE type='table';")
         tables = self.sql.fetchall()
         for guild in tables:
             if guild[0] != "bugs" and guild[0] != "settings":
-                name_bd=self.sql.execute(f"""SELECT * FROM "{guild[0]}" WHERE user_id = ?""", (ctx.author.id, )).fetchone()
-                if isinstance(name_bd, tuple):
-                    self.sql.execute(f"""UPDATE "{guild[0]}" SET voice = ? WHERE user_id = ?""", (name, ctx.author.id, ))
-                    await ctx.respond("Ваше название успешно обновлено!", ephemeral=True)
-                else:
-                    self.sql.execute(f"""INSERT INTO "{guild[0]}"(user_id, voice) VALUES(?, ?)""", (ctx.author.id, name))
-                    await ctx.respond("Ваше название успешно установлено!", ephemeral=True)
-                await self.voices.append_channel_name(author=ctx.author.id, name=name, guild=str(ctx.guild.id))
-                self.db.commit()        
+                if guild[0] == f"{interaction.guild.id}":
+                    name_bd=self.sql.execute(f"""SELECT * FROM "{guild[0]}" WHERE user_id = ?""", (interaction.author.id, )).fetchone()
+                    if isinstance(name_bd, tuple):
+                        self.sql.execute(f"""UPDATE "{guild[0]}" SET voice = ? WHERE user_id = ?""", (name, interaction.author.id, ))
+                        await interaction.send("Ваше название успешно обновлено!", ephemeral=True)
+                    else:
+                        self.sql.execute(f"""INSERT INTO "{guild[0]}"(user_id, voice) VALUES(?, ?)""", (interaction.author.id, name))
+                        await interaction.send("Ваше название успешно установлено!", ephemeral=True)
+                    await self.voices.append_channel_name(author=interaction.author.id, name=name, guild=str(interaction.guild.id))
+                    self.db.commit()        
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member: discord.Member, before, after):
@@ -65,6 +68,6 @@ class Channels(commands.Cog):
             await before.channel.delete()
             await self.voices.pop_channel(before.channel.id)
 
-def setup(client):
+async def setup(client):
     print("Connect channels.py")
-    client.add_cog(Channels(client))
+    await client.add_cog(Channels(client))

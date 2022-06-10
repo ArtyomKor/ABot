@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from discord.commands import slash_command
+from discord import app_commands
 import re
 import datetime
 
@@ -85,7 +85,7 @@ class MuteSelect(discord.ui.Select):
                 hours = 23
                 minutes = 59
                 seconds = 59
-            await self.user.timeout_for(duration=datetime.timedelta(seconds=float(seconds), days=float(days), minutes=float(minutes), hours=float(hours), weeks=float(weeks)), reason=f"{self.user} был замучен на {self.values[0]}")
+            await self.user.timeout(datetime.timedelta(seconds=float(seconds), days=float(days), minutes=float(minutes), hours=float(hours), weeks=float(weeks)), reason=f"{self.user} был замучен на {self.values[0]}")
             embed = discord.Embed(title=f"{self.user} был замучен!")
             await interaction.message.edit(embed=embed, view=None, delete_after=10.0)
             await interaction.response.send_message(f"{self.user} был замучен!", ephemeral=True)
@@ -107,7 +107,7 @@ class CloseButton(discord.ui.Button):
     def __init__(self, interacted: discord.Member, user: discord.Member):
         self.user = user
         self.interacted = interacted
-        super().__init__(style = discord.ButtonStyle.secondary, label='Закрыть', disabled=check_permission(user))
+        super().__init__(style = discord.ButtonStyle.secondary, label='Закрыть')
 
     async def callback(self, interaction: discord.Interaction):
         if self.interacted.id == interaction.user.id:
@@ -118,19 +118,20 @@ class Moderation(commands.Cog):
         self.client = client
         print("moderation.py connected!")
 
-    @slash_command(name='admin', description='Админ панель')
-    async def admin(self, ctx: discord.ApplicationContext, user: discord.Option(discord.Member, "Пользователь")):
+    @commands.hybrid_command(name='admin', description='Админ панель')
+    @app_commands.describe(user="Участник")
+    async def admin(self, interaction: commands.Context, user: discord.Member):
         embed = discord.Embed(title=user)
         view = discord.ui.View(timeout=None)
-        view.add_item(BanButton(ctx.author, user))
-        view.add_item(KickButton(ctx.author, user))
-        if user.timed_out == False:
-            view.add_item(MuteButton(ctx.author, user))
+        view.add_item(BanButton(interaction.author, user))
+        view.add_item(KickButton(interaction.author, user))
+        if user.timed_out_until is None:
+            view.add_item(MuteButton(interaction.author, user))
         else:
-            view.add_item(UnMuteButton(ctx.author, user))
-        view.add_item(CloseButton(ctx.author, user))
-        await ctx.respond(embed=embed, view=view)
+            view.add_item(UnMuteButton(interaction.author, user))
+        view.add_item(CloseButton(interaction.author, user))
+        await interaction.send(embed=embed, view=view)
 
-def setup(client):
+async def setup(client):
     print("Connect moderation.py")
-    client.add_cog(Moderation(client))
+    await client.add_cog(Moderation(client))

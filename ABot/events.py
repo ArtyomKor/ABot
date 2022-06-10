@@ -11,7 +11,7 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        await self.client.sync_commands()
+        await self.client.tree.sync()
         await self.client.change_presence(activity=discord.Game('шпиона'), status=discord.Status.idle)
         print('Подключен...')
 
@@ -34,6 +34,6 @@ class Events(commands.Cog):
         self.sql.execute(f"""INSERT INTO "{member.guild.id}"(user_id) VALUES (?)""", (member.id, ))
         self.db.commit()
 
-def setup(client):
+async def setup(client):
     print("Connect events.py")
-    client.add_cog(Events(client))
+    await client.add_cog(Events(client))
