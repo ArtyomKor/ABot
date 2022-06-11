@@ -1,3 +1,5 @@
+# временно не работает из-за отсутствия ContextMenu в когах
+
 import discord
 from discord.ext import commands
 from discord import app_commands

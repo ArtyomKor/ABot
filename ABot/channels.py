@@ -4,6 +4,7 @@ from discord import app_commands
 import sqlite3
 from ABot.cache import VoiceCache
 
+
 class Channels(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -27,11 +28,11 @@ class Channels(commands.Cog):
     async def clear(self, interaction: commands.Context, count: int):
         deleted = await interaction.channel.purge(limit=count)
         await interaction.send(f'Удалено {len(deleted)} сообщений(ия, ие)!', ephemeral=True)
-    
+
     @commands.hybrid_command(description="Установить имя для своего голосового канала")
     @app_commands.describe(name="Имя для голосового канала.")
     async def name(self, interaction: commands.Context, name: str):
-        if interaction.author.voice != None:
+        if interaction.author.voice is not None:
             if (interaction.author.id, interaction.author.voice.channel.id) in self.voices.channels.items():
                 await interaction.author.voice.channel.edit(name=name)
             else:
@@ -41,7 +42,7 @@ class Channels(commands.Cog):
         for guild in tables:
             if guild[0] != "bugs" and guild[0] != "settings":
                 if guild[0] == f"{interaction.guild.id}":
-                    name_bd=self.sql.execute(f"""SELECT * FROM "{guild[0]}" WHERE user_id = ?""", (interaction.author.id, )).fetchone()
+                    name_bd = self.sql.execute(f"""SELECT * FROM "{guild[0]}" WHERE user_id = ?""", (interaction.author.id, )).fetchone()
                     if isinstance(name_bd, tuple):
                         self.sql.execute(f"""UPDATE "{guild[0]}" SET voice = ? WHERE user_id = ?""", (name, interaction.author.id, ))
                         await interaction.send("Ваше название успешно обновлено!", ephemeral=True)
@@ -49,24 +50,25 @@ class Channels(commands.Cog):
                         self.sql.execute(f"""INSERT INTO "{guild[0]}"(user_id, voice) VALUES(?, ?)""", (interaction.author.id, name))
                         await interaction.send("Ваше название успешно установлено!", ephemeral=True)
                     await self.voices.append_channel_name(author=interaction.author.id, name=name, guild=str(interaction.guild.id))
-                    self.db.commit()        
+                    self.db.commit()
 
     @commands.Cog.listener()
-    async def on_voice_state_update(self, member: discord.Member, before, after):
-        if after.channel != None and member in after.channel.members and after.channel.id == self.sql.execute("""SELECT create_voice FROM settings WHERE guild = ?""", (after.channel.guild.id, )).fetchone()[0]:
+    async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
+        if after.channel is not None and member in after.channel.members and after.channel.id == self.sql.execute("""SELECT create_voice FROM settings WHERE guild = ?""", (after.channel.guild.id,)).fetchone()[0]:
             overwrites = {
                 member: discord.PermissionOverwrite(manage_channels=True, manage_permissions=True)
             }
-            if self.voices.channels_name[f"{after.channel.guild.id}:{member.id}"] == None:
+            if self.voices.channels_name[f"{after.channel.guild.id}:{member.id}"] is None:
                 name = f"Канал {member.name}"
             else:
                 name = self.voices.channels_name[f"{after.channel.guild.id}:{member.id}"]
             channel = await after.channel.category.create_voice_channel(name=name, reason=f"Создание голосового канала из {after.channel.name} пользователем {member}", overwrites=overwrites)
             await member.move_to(channel, reason=f"Создание голосового канала из {after.channel.name} пользователем {member}")
             await self.voices.append_channel(member.id, channel.id)
-        if before.channel != None and before.channel.id in self.voices.channels.values() and len(before.channel.members) == 0:
+        if before.channel is not None and before.channel.id in self.voices.channels.values() and len(before.channel.members) == 0:
             await before.channel.delete()
             await self.voices.pop_channel(before.channel.id)
+
 
 async def setup(client):
     print("Connect channels.py")

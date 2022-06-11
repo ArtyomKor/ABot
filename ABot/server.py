@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 
+
 class Server(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -15,22 +16,33 @@ class Server(commands.Cog):
         dnd_count = 0
         offline_count = 0
         for i in interaction.guild.members:
-            if i.bot == True:
-                bot_count=bot_count+1
+            if i.bot:
+                bot_count = bot_count + 1
             else:
-                human_count=human_count+1
+                human_count = human_count + 1
             match i.status:
-                case discord.Status.online: online_count=online_count+1
-                case discord.Status.offline: offline_count=offline_count+1
-                case discord.Status.idle: idle_count=idle_count+1
-                case discord.Status.dnd: dnd_count=dnd_count+1
+                case discord.Status.online:
+                    online_count = online_count + 1
+                case discord.Status.offline:
+                    offline_count = offline_count + 1
+                case discord.Status.idle:
+                    idle_count = idle_count + 1
+                case discord.Status.dnd:
+                    dnd_count = dnd_count + 1
+
+        verification_level = ""
 
         match interaction.guild.verification_level:
-            case discord.VerificationLevel.none: verification_level = "Отсутствует"
-            case discord.VerificationLevel.low: verification_level = "Низкий"
-            case discord.VerificationLevel.medium: verification_level = "Средний"
-            case discord.VerificationLevel.high: verification_level = "Высокий"
-            case discord.VerificationLevel.highest: verification_level = "Самый высокий"
+            case discord.VerificationLevel.none:
+                verification_level = "Отсутствует"
+            case discord.VerificationLevel.low:
+                verification_level = "Низкий"
+            case discord.VerificationLevel.medium:
+                verification_level = "Средний"
+            case discord.VerificationLevel.high:
+                verification_level = "Высокий"
+            case discord.VerificationLevel.highest:
+                verification_level = "Самый высокий"
 
         embed = discord.Embed(title=f'Информация о сервере {interaction.guild.name}')
         embed.add_field(name='Участники:', value=f"""
@@ -55,6 +67,7 @@ class Server(commands.Cog):
         embed.set_thumbnail(url=interaction.guild.icon.url)
 
         await interaction.send(embed=embed)
+
 
 async def setup(client):
     print("Connect server.py")

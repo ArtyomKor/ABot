@@ -16,7 +16,6 @@ class VoiceCache:
             if channel in voice:
                 self.channels.pop(voice[0])
 
-        
     async def append_channel_name(self, author, name, guild):
         try:
             self.channels_name[f"{guild}:{author}"] = name
